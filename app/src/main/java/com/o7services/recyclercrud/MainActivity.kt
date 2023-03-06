@@ -4,18 +4,30 @@ import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
 import com.o7services.recyclercrud.databinding.ActivityMainBinding
 import com.o7services.recyclercrud.databinding.AddLayoutBinding
 import com.o7services.recyclercrud.databinding.EditLayoutBinding
 
 class MainActivity : AppCompatActivity(), ClickList {
     lateinit var binding:ActivityMainBinding
+    val db = Firebase.firestore
      var userList=ArrayList<UserModel>()
     lateinit var adapter: UserAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding= ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        db.collection("User").get().addOnSuccessListener {
+       for (snapshot in it){
+           val userModel = snapshot.toObject(UserModel::class.java)
+           userList.add(userModel)
+
+       }
+        }
+
         adapter= UserAdapter(userList,this)
         binding.recycleview.adapter=adapter
         binding.recycleview.layoutManager=LinearLayoutManager(this)
@@ -31,7 +43,14 @@ class MainActivity : AppCompatActivity(), ClickList {
                     dialogBinding.etRollNo.error="enter rollno"
                 }
                 else{
-                    userList.add(UserModel(dialogBinding.etName.text.toString(),dialogBinding.etRollNo.text.toString()))
+                   val userModel=UserModel(dialogBinding.etName.text.toString(),dialogBinding.etRollNo.text.toString())
+                    db.collection("User")
+                        .add(userModel)
+                        .addOnSuccessListener {
+
+                        }
+
+
                     customDialog.dismiss()
                     adapter.notifyDataSetChanged()
                 }

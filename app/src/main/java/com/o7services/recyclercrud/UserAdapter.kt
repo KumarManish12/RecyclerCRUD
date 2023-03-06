@@ -7,6 +7,7 @@ import com.o7services.recyclercrud.databinding.ItemRvLayoutBinding
 
 class UserAdapter(val userList:ArrayList<UserModel>,val list: ClickList):RecyclerView.Adapter<UserAdapter.viewHolder>() {
     class viewHolder(val binding: ItemRvLayoutBinding):RecyclerView.ViewHolder(binding.root){
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewHolder {
