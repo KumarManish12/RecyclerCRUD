@@ -4,12 +4,15 @@ import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.DocumentChange.Type.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.o7services.recyclercrud.databinding.ActivityMainBinding
 import com.o7services.recyclercrud.databinding.AddLayoutBinding
 import com.o7services.recyclercrud.databinding.EditLayoutBinding
+import io.grpc.Context.key
 
 class MainActivity : AppCompatActivity(), ClickList {
     lateinit var binding:ActivityMainBinding
@@ -20,14 +23,48 @@ class MainActivity : AppCompatActivity(), ClickList {
         super.onCreate(savedInstanceState)
         binding= ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        db.collection("User").get().addOnSuccessListener {
-       for (snapshot in it){
-           val userModel = snapshot.toObject(UserModel::class.java)
-           userList.add(userModel)
 
-       }
+       /* db.collection("User").get().addOnSuccessListener {
+            for (snapshot in it){
+                val userModel = snapshot.toObject(UserModel::class.java)
+                userList.add(userModel)
+
+            }
+        }*/
+        db.collection("User").addSnapshotListener { value, error ->
+            for (snapshots in value!!.documentChanges){
+                when(snapshots.type){
+                    ADDED ->{
+                        var userModel=UserModel()
+                        userModel=snapshots.document.toObject(userModel::class.java)
+                        userModel.key=snapshots.document.id?:""
+                        userList.add(userModel)
+                    }
+                    MODIFIED ->{
+                        var userModel=UserModel()
+                        userModel=snapshots.document.toObject(userModel::class.java)
+                        userModel.key=snapshots.document.id?:""
+                        for (i in 0..userList.size-1){
+                            if ((snapshots.document.id?:"").equals(userList[i].key)){
+                                userList.set(i,userModel)
+                                break
+                            }
+                        }
+                    }
+                    REMOVED -> {
+                        var userModel=UserModel()
+                        userModel=snapshots.document.toObject(userModel::class.java)
+                        userModel.key=snapshots.document.id?:""
+                        for(i in 0..userList.size-1){
+                            if ((snapshots.document.id?:"").equals(userList[i].key)){
+                                userList.removeAt(i)
+                                break
+                            }
+                        }
+                    }
+                }
+            }
         }
-
         adapter= UserAdapter(userList,this)
         binding.recycleview.adapter=adapter
         binding.recycleview.layoutManager=LinearLayoutManager(this)
@@ -35,6 +72,7 @@ class MainActivity : AppCompatActivity(), ClickList {
             val dialogBinding=AddLayoutBinding.inflate(layoutInflater)
             val customDialog=Dialog(this)
             customDialog.setContentView(dialogBinding.root)
+
             dialogBinding.btnAdd.setOnClickListener {
                 if (dialogBinding.etName.text.toString().isEmpty()){
                     dialogBinding.etName.error="enter name"
@@ -49,6 +87,7 @@ class MainActivity : AppCompatActivity(), ClickList {
                         .addOnSuccessListener {
 
                         }
+
 
 
                     customDialog.dismiss()
@@ -71,7 +110,15 @@ class MainActivity : AppCompatActivity(), ClickList {
                 dialogBinding1.etRollNo.error="enter rollno"
             }
             else{
-                userList.set(position,UserModel(dialogBinding1.etName.text.toString(),dialogBinding1.etRollNo.text.toString()))
+                var updatUserModel=UserModel()
+                updatUserModel.name=dialogBinding1.etName.text.toString()
+                updatUserModel.rollno=dialogBinding1.etRollNo.text.toString()
+                updatUserModel.key=userList[position].key
+                db.collection("User")
+                    .document(userList[position].key?:"")
+                    .set(updatUserModel).addOnSuccessListener {
+                        }
+              //  userList.set(position,UserModel(dialogBinding1.etName.text.toString(),dialogBinding1.etRollNo.text.toString()))
                 adapter.notifyDataSetChanged()
                 customDialog1.dismiss()
             }
@@ -84,7 +131,13 @@ class MainActivity : AppCompatActivity(), ClickList {
                 dialogBinding1.etRollNo.error="enter rollno"
             }
             else{
-                userList.remove(UserModel(dialogBinding1.etName.text.toString(),dialogBinding1.etRollNo.text.toString()))
+                var deleteUserModel=UserModel()
+                deleteUserModel.name=dialogBinding1.etName.text.toString()
+                deleteUserModel.rollno=dialogBinding1.etRollNo.text.toString()
+                deleteUserModel.key=userList[position].key
+                db.collection("User")
+                    .document(deleteUserModel.key?:"").delete()
+               // userList.remove(UserModel(dialogBinding1.etName.text.toString(),dialogBinding1.etRollNo.text.toString()))
                 adapter.notifyDataSetChanged()
                 customDialog1.dismiss()
             }
