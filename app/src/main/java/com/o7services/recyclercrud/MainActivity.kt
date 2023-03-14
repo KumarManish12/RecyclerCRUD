@@ -4,6 +4,7 @@ import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentChange.Type.*
 import com.google.firebase.firestore.ktx.firestore
@@ -17,7 +18,8 @@ import io.grpc.Context.key
 class MainActivity : AppCompatActivity(), ClickList {
     lateinit var binding:ActivityMainBinding
     val db = Firebase.firestore
-     var userList=ArrayList<UserModel>()
+    private lateinit var auth: FirebaseAuth
+    var userList=ArrayList<UserModel>()
     lateinit var adapter: UserAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,7 +114,7 @@ class MainActivity : AppCompatActivity(), ClickList {
             else{
                 var updatUserModel=UserModel()
                 updatUserModel.name=dialogBinding1.etName.text.toString()
-                updatUserModel.rollno=dialogBinding1.etRollNo.text.toString()
+                updatUserModel.mobile=dialogBinding1.etRollNo.text.toString()
                 updatUserModel.key=userList[position].key
                 db.collection("User")
                     .document(userList[position].key?:"")
@@ -133,7 +135,7 @@ class MainActivity : AppCompatActivity(), ClickList {
             else{
                 var deleteUserModel=UserModel()
                 deleteUserModel.name=dialogBinding1.etName.text.toString()
-                deleteUserModel.rollno=dialogBinding1.etRollNo.text.toString()
+                deleteUserModel.mobile=dialogBinding1.etRollNo.text.toString()
                 deleteUserModel.key=userList[position].key
                 db.collection("User")
                     .document(deleteUserModel.key?:"").delete()

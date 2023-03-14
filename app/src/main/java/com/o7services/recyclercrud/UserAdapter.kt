@@ -17,7 +17,7 @@ class UserAdapter(val userList:ArrayList<UserModel>,val list: ClickList):Recycle
 
     override fun onBindViewHolder(holder: viewHolder, position: Int) {
         holder.binding.tvName.text=userList[position].name
-        holder.binding.tvRollNo.text=userList[position].rollno
+        holder.binding.tvRollNo.text=userList[position].mobile
         holder.itemView.setOnClickListener {
             list.listClicked(position)
 
