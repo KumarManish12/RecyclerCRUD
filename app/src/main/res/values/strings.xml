@@ -11,4 +11,6 @@
     <string name="create_a_account">Create a Account</string>
     <string name="register">Register</string>
     <string name="mobile">Mobile No</string>
+    <string name="signout">SignOut</string>
+    <string name="googlesignin">Google SignIn</string>
 </resources>

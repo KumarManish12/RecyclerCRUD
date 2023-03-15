@@ -37,5 +37,13 @@
         android:id="@+id/tvcreateaccount"
         android:textSize="@dimen/size_20sp"
         />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_30dp"
+        android:text="@string/googlesignin"
+        android:textSize="@dimen/size_20sp"
+         android:id="@+id/tvgooglesignin"
+        />
 
 </LinearLayout>

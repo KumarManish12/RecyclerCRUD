@@ -1,10 +1,12 @@
 package com.o7services.recyclercrud
 
 import android.app.Dialog
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentChange.Type.*
 import com.google.firebase.firestore.ktx.firestore
@@ -25,6 +27,13 @@ class MainActivity : AppCompatActivity(), ClickList {
         super.onCreate(savedInstanceState)
         binding= ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        auth = Firebase.auth
+        binding.btnsignout.setOnClickListener {
+            auth.signOut()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+
+        }
 
        /* db.collection("User").get().addOnSuccessListener {
             for (snapshot in it){
@@ -104,6 +113,8 @@ class MainActivity : AppCompatActivity(), ClickList {
         val dialogBinding1=EditLayoutBinding.inflate(layoutInflater)
         val customDialog1=Dialog(this)
         customDialog1.setContentView(dialogBinding1.root)
+        dialogBinding1.etName.setText(userList[position].name)
+        dialogBinding1.etRollNo.setText(userList[position].mobile)
         dialogBinding1.btnEdit.setOnClickListener {
             if (dialogBinding1.etName.text.toString().isEmpty()){
                 dialogBinding1.etName.error="enter name"
