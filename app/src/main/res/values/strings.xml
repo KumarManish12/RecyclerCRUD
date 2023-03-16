@@ -13,4 +13,10 @@
     <string name="mobile">Mobile No</string>
     <string name="signout">SignOut</string>
     <string name="googlesignin">Google SignIn</string>
+
+
+
+    <string name="facebook_app_id">892533082015971</string>
+    <string name="fb_login_protocol_scheme">fb892533082015971</string>
+    <string name="facebook_client_token">5258149f238e2649520b7b893b0512c8</string>
 </resources>

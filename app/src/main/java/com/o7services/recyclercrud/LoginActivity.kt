@@ -1,26 +1,34 @@
 package com.o7services.recyclercrud
 
+import android.R
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import com.facebook.*
+import com.facebook.login.LoginResult
+import com.facebook.login.widget.LoginButton
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.o7services.recyclercrud.databinding.ActivityLoginBinding
+import java.util.*
+
 
 class LoginActivity : AppCompatActivity() {
     lateinit var binding:ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
     lateinit var gso : GoogleSignInOptions
     lateinit var googleSignInClient : GoogleSignInClient
+   val callbackManager = CallbackManager.Factory.create()
 
     var googleSigninResult=registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
@@ -48,9 +56,31 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        auth = Firebase.auth
         binding= ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        FacebookSdk.sdkInitialize(this)
+        binding.loginButton.setReadPermissions(Arrays.asList("email"))
+
+
+       binding.loginButton.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+            override fun onSuccess(loginResult: LoginResult) {
+                val loggedOut = AccessToken.getCurrentAccessToken() == null
+                val credential = FacebookAuthProvider.getCredential(AccessToken.getCurrentAccessToken()?.token ?:"")
+                auth.signInWithCredential(credential).addOnSuccessListener {
+                }.addOnFailureListener {
+
+                }
+            }
+
+            override fun onCancel() {
+                // App code
+            }
+
+            override fun onError(exception: FacebookException) {
+                // App code
+            }
+        })
+        auth = Firebase.auth
         gso=GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("5785146692-svsbkllq1fjrhju618a9ofaats7imljr.apps.googleusercontent.com")
             .requestEmail()

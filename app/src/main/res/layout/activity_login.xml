@@ -7,21 +7,23 @@
     android:gravity="center"
     android:layout_height="match_parent"
     tools:context=".LoginActivity">
+
     <EditText
+        android:id="@+id/etemail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/email"
-        android:id="@+id/etemail"
         android:inputType="textEmailAddress"
-        />
+        android:minHeight="48dp" />
+
     <EditText
+        android:id="@+id/etpassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_20dp"
         android:hint="@string/password"
         android:inputType="numberPassword"
-        android:id="@+id/etpassword"
-        android:layout_marginTop="@dimen/margin_20dp"
-        />
+        android:minHeight="48dp" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -45,5 +47,12 @@
         android:textSize="@dimen/size_20sp"
          android:id="@+id/tvgooglesignin"
         />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        tools:ignore="SpeakableTextPresentCheck" />
 
 </LinearLayout>
