@@ -19,4 +19,6 @@
     <string name="facebook_app_id">892533082015971</string>
     <string name="fb_login_protocol_scheme">fb892533082015971</string>
     <string name="facebook_client_token">5258149f238e2649520b7b893b0512c8</string>
+    <string name="channel_name">Notify Channel</string>
+    <string name="channel_description">Notification For Testing</string>
 </resources>
